@@ -1,19 +1,44 @@
 # Yukkuri Toolbar Presets
 
 A hotkey mod for *Yukkuri Hakkei* (ゆっくり八景), a closed-source Japanese
-simulation game built on the HSP3 runtime. The game's top launcher holds nine
-action slots that have to be reconfigured by hand every time you change how you
-play. This mod stores eight full launcher layouts and switches between them with
-a function key.
+simulation game built on the HSP3 runtime. 
+The game's top launcher holds nine action slots that have to be reconfigured by hand every time you want to change how you behave. This mod stores eight full launcher layouts and can switch between them with a function key.
 
     F1 - F8          switch the launcher to preset 1-8
     Shift+F1 - F8    capture the current launcher into that preset
     F9               show or hide the preset panel
 
-The game has no mod API, no scripting hook and no published format. Everything
-below was worked out by reading the process.
+The game has no mod API, scripting hook or published format. So this mod works by reading the process.
 
-## How the toolbar is found
+## Build
+
+Both binaries must be 32-bit, because the game process is. MSYS2 MinGW32:
+
+```sh
+MINGW32_BIN=/c/msys64/mingw32/bin ./build.sh
+```
+
+Produces `build/YukkuriToolbarMod.dll`, `build/YukkuriToolbarMod.exe` and
+`build/slots_test.exe`.
+
+Sources are kept pure ASCII and all wide strings are written as `\uXXXX`
+escapes, so the build does not depend on the compiler's input charset guess.
+
+## Install
+
+Copy `YukkuriToolbarMod.exe` and `YukkuriToolbarMod.dll` next to
+`ゆっくり八景.exe`, then start the game through the mod executable. The mod is based on my environment where a Chinese-translation launcher runs the game, so the executable will run that and inject the DLL once the game window appears. 
+Attaching to an already running game also works. Like clicking the mod executable after you already opened the game itself.
+
+Tested against the Manba Chinese translation of Yukkuri Hakkei,
+`ゆっくり八景.exe` at 10,639,933 bytes. Other builds have different variable
+layouts and are not supported for now.
+
+I'll work on making this available for the original Japanese build.
+
+## Mechanics
+
+##### How the toolbar is found
 
 HSP3 keeps every script variable in a table of `PVal` records. In a 32-bit build
 each record is 48 bytes and starts with the same 28 bytes for any scalar int:
@@ -36,7 +61,7 @@ required before a candidate is accepted.
 runs the fingerprint logic against a live game without loading anything into it,
 so the risky part can be debugged outside the injected DLL.
 
-## How the panel is drawn
+##### How the panel is drawn
 
 The game owns its window and repaints it continuously. `src/overlay.c` hooks
 `BitBlt` and `StretchBlt` in the game's import table, and paints the preset
@@ -46,7 +71,7 @@ overwritten within a frame.
 The panel colours are sampled from the game's own launcher artwork so the
 overlay sits in the same palette as the UI it belongs to.
 
-## Why it is keyboard only
+##### Why it is keyboard only
 
 HSP reads input with `GetAsyncKeyState`, which reports physical key and button
 state no matter how messages are routed. A clickable panel would therefore feed
@@ -69,32 +94,8 @@ they are safe to take.
 | `tools/hspv.py` | HSP `PVal` struct reader |
 | `docs/使用说明.txt` | End user manual, Chinese |
 
-## Build
 
-Both binaries must be 32-bit, because the game process is. MSYS2 MinGW32:
 
-```sh
-MINGW32_BIN=/c/msys64/mingw32/bin ./build.sh
-```
+## Notes
 
-Produces `build/YukkuriToolbarMod.dll`, `build/YukkuriToolbarMod.exe` and
-`build/slots_test.exe`.
-
-Sources are kept pure ASCII and all wide strings are written as `\uXXXX`
-escapes, so the build does not depend on the compiler's input charset guess.
-
-## Install
-
-Copy `YukkuriToolbarMod.exe` and `YukkuriToolbarMod.dll` next to
-`ゆっくり八景.exe`, then start the game through the mod executable. It runs the
-original Chinese-translation launcher and injects the DLL once the game window
-appears. Attaching to an already running game also works.
-
-Tested against the Manba Chinese translation of Yukkuri Hakkei,
-`ゆっくり八景.exe` at 10,639,933 bytes. Other builds have different variable
-layouts and are not supported.
-
-## What is not here
-
-No game files, no artwork and no translated text. This repository contains only
-the mod source. The game itself is not distributed and not redistributable.
+This repository contains only the mod source and no game files.
