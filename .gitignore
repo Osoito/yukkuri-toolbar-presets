@@ -1,0 +1,10 @@
+# Build output
+build/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+
+# Captured game state, machine specific
+tools/slots_backup.txt
