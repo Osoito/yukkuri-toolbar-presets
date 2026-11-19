@@ -8,6 +8,18 @@ A hotkey mod for *Yukkuri Hakkei* (ゆっくり八景), a closed-source Japanese
 
 The game has no mod API, scripting hook or published format. So this mod works by reading the process.
 
+The mod itself is a download. How it was built is not, and that is what this repository is for.
+
+## What you can take from this
+
+**The HSP3 variable table layout, in [`src/slots.c`](src/slots.c).** A 32-bit HSP3 `PVal` record is 48 bytes and every scalar int starts with the same 28 bytes, so those 28 bytes work as a needle that finds the whole variable table in a running process. That applies to any game built on HSP3, this one included. I have not found it written down anywhere in a form you can act on, which is why it is spelled out under Mechanics below.
+
+**Locating a moving target by value fingerprint.** The base address changes every launch, so the mod reads 35 known integers out of the game's own save file and searches the process for a region where all 35 match at the expected stride. A match on 35 values at a fixed stride is not a coincidence. This beats a hardcoded offset for any game that saves the state you are looking for.
+
+**Painting over a window you do not own, in [`src/overlay.c`](src/overlay.c).** Hooking `BitBlt` and `StretchBlt` in the game's import table and drawing after its own present call. Drawing from any other thread gets overwritten within a frame.
+
+**Why the panel is keyboard only.** A worked example of a constraint that came out of reading the engine. HSP polls `GetAsyncKeyState`, which reports physical button state no matter how messages are routed, so a clickable panel would also feed every click to the game. See Mechanics.
+
 ## Build
 
 Both binaries must be 32-bit, because the game process is. MSYS2 MinGW32:
@@ -68,3 +80,5 @@ HSP reads input with `GetAsyncKeyState`, which reports physical key and button s
 ## Notes
 
 This repository contains only the mod source and no game files.
+
+Three more repositories from the same run of game-mod work, each written up the same way. [isaac-voice-sfx-pipeline](https://github.com/Osoito/isaac-voice-sfx-pipeline) assigns 43 voice clips across 673 sound effect slots under stated constraints, [isaac-chiikawa-soundtrack](https://github.com/Osoito/isaac-chiikawa-soundtrack) fills 85 music slots from 16 masters, and [asset-pipeline](https://github.com/Osoito/asset-pipeline) is the scaffold those two have in common.
