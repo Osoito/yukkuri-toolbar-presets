@@ -81,4 +81,4 @@ HSP reads input with `GetAsyncKeyState`, which reports physical key and button s
 
 This repository contains only the mod source and no game files.
 
-Three more repositories from the same run of game-mod work, each written up the same way. [isaac-voice-sfx-pipeline](https://github.com/Osoito/isaac-voice-sfx-pipeline) assigns 43 voice clips across 673 sound effect slots under stated constraints, [isaac-chiikawa-soundtrack](https://github.com/Osoito/isaac-chiikawa-soundtrack) fills 85 music slots from 16 masters, and [asset-pipeline](https://github.com/Osoito/asset-pipeline) is the scaffold those two have in common.
+Three more repositories from the same run of game-mod work, each written up the same way. [isaac-voice-sfx-pipeline](https://github.com/Osoito/isaac-voice-sfx-pipeline) assigns 43 voice clips across 673 sound effect slots under stated constraints, [isaac-chiikawa-soundtrack](https://github.com/Osoito/isaac-chiikawa-soundtrack) fills 85 music slots from 16 masters, and [slot-assignment-scaffold](https://github.com/Osoito/slot-assignment-scaffold) is the scaffold those two have in common.
